@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: tmux,vim,pair | rylwin's blog]]></title>
+  <link href="http://rylwin.github.io/blog/categories/tmux-vim-pair/atom.xml" rel="self"/>
+  <link href="http://rylwin.github.io/"/>
+  <updated>2013-09-29T16:15:02-05:00</updated>
+  <id>http://rylwin.github.io/</id>
+  <author>
+    <name><![CDATA[Ryan Winograd]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[The Perfect Remote Pair Environment]]></title>
+    <link href="http://rylwin.github.io/blog/2013/06/25/perfect-remote-pair-environment/"/>
+    <updated>2013-06-25T10:37:00-05:00</updated>
+    <id>http://rylwin.github.io/blog/2013/06/25/perfect-remote-pair-environment</id>
+    <content type="html"><![CDATA[<p>I recently started working with a remote programmer and quickly realized we
+needed an effective way to pair remotely. Using a ssh, vim, and tmux (along
+with some other nifty tools) I was able to set up a powerful pair environment
+in minutes. Here are the steps:</p>
+
+<h2>1. Have a box you can SSH into</h2>
+
+<p>I like using
+<a href="http://www.linode.com/?r=baecb63cb7bb6144d5328e91159225e45e876115">Linode</a>
+(full disclosure: that link has a referral code), but any *nix box you can SSH
+into will do. All following instructions are to be performed on your remote
+box, unless otherwise specified.</p>
+
+<h2>2. Create a new user account</h2>
+
+<p>The first thing I did was add a new user called &lsquo;pair&rsquo; to a Linode I use for
+development.</p>
+
+<p><code>
+sudo add_user pair
+</code></p>
+
+<p>I&rsquo;ve seen ways to <a href="http://readystate4.com/2011/01/02/sharing-remote-terminal-session-between-two-users-with-tmux/">share tmux sessions between two user
+accounts</a>,
+but then I cannot let my pair wrap up work on <em>my</em> tmux session without
+watching them (I have trust issues). But using an account just for pairing
+means:</p>
+
+<ul>
+<li>no worries about pair partner messing with my personal files</li>
+<li>it&rsquo;s easy to have config files tweaked for pairing</li>
+<li>I can let pair partners log in via their public key (they don&rsquo;t need the
+password and I can remove their key at any time)</li>
+</ul>
+
+
+<h2>3. Configure tmux / vim</h2>
+
+<p>For those who aren&rsquo;t aware, <a href="http://tmux.sourceforge.net/">tmux</a> is a termainal
+multiplexer&mdash;it lets you easily switch between programs in one terminal. It&rsquo;s a
+fantastic piece of software and if you haven&rsquo;t used it before I highly
+recommend you take a look.</p>
+
+<p>After setting up the user I copied over my vimrc and tmux configurations from
+my dotfiles repo. One issue is that users (like myself) prefer their own
+configss. The nice thing about having a separate pair account is that it&rsquo;s
+easier to compromise on config changes. After all, it&rsquo;s not a change to <em>my</em>
+vimrc, it&rsquo;s our shared vimrc.</p>
+
+<p>My pair partner is a big fan of the <a href="http://vimbits.com/bits/180">jk smash</a> to
+switch back to normal mode.  When we were pairing, his instincts would take
+over and he would add &lsquo;jk&rsquo; to the end of lines of code. I told him just
+to add it in to the vimrc, and that was that.</p>
+
+<p>Note: Screen would also work fine instead of tmux. As would emacs or any other
+terminal editor in place of vim. But tmux/vim is my preference.</p>
+
+<h2>4. SSH Keys</h2>
+
+<p>No need to give out the password to the pair account. Just ask your pair for
+their SSH key and copy it over yourself. Paste it into ~/.ssh/authorized_keys
+within your pair account. If you ever want to revoke their access, just remove
+their key (note that this won&rsquo;t close an existing session).</p>
+
+<h2>5. Local SSH Config / Port Forwarding</h2>
+
+<p>I mostly work on Rails apps. Though we are often just looking at code and
+running tests while in the pair environment, it&rsquo;s sometimes helpful to interact
+with the app in the browser to diagnose issues and check behavior. With port
+forwarding, we can run the dev Rails server in our pair environment and access
+it using our browsers locally.</p>
+
+<p>The ssh command to log in with forwarding looks like:</p>
+
+<p><code>
+ssh pair@server.url -L 3000:127.0.0.1:3000
+</code></p>
+
+<p>With this port forwarding, I can open my browser and go to <code>localhost:3000</code> to
+access the dev Rails server running on the remote box. That&rsquo;s quite a bit to
+type out every time, so I added an alias to my <code>.ssh/config</code>:</p>
+
+<p><code>
+Host pair
+  HostName server.url
+  User pair
+  LocalForward 3000 127.0.0.1:3000
+</code></p>
+
+<p>Wit the alias I can log in with just <code>ssh pair</code>.</p>
+
+<h2>6. Git Pairing</h2>
+
+<p>When we pair it&rsquo;s nice to have the git log reflect that we worked together on a
+piece of code. Fortunately, the
+<a href="https://github.com/glg/git-pairing">git-pairing</a> gem makes this easy. It
+allows you to pre-define several pair partners who you can identify by their
+initials. When you want to commit as a pair, just type:</p>
+
+<p><code>
+git pair initials1 initials2
+</code>
+And when you&rsquo;re working solo:
+<code>
+git solo
+</code></p>
+
+<h2>Conclusion</h2>
+
+<p>The pair environment + a phone call / skype makes working remotely incredibly
+easy. I&rsquo;ve found this setup to be just as easy as working side-by-side in
+person. Perhaps even better, because when we&rsquo;re done pairing I can logout of
+the pair server and get right back to working locally.</p>
+]]></content>
+  </entry>
+  
+</feed>

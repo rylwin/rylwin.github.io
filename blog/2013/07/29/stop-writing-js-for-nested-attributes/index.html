@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Stop writing JS for nested attributes - rylwin's blog</title>
+  <meta name="author" content="Ryan Winograd">
+
+  
+  <meta name="description" content="I&rsquo;ve been re-writing/copying the same JS to deal with adding/removing nested
+attributes for far too long. On a project I recently started, I &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://rylwin.github.io/blog/2013/07/29/stop-writing-js-for-nested-attributes">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="rylwin's blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-6332560-8']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">rylwin's blog</a></h1>
+  
+    <h2>coding for results</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:rylwin.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Stop Writing JS for Nested Attributes</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-29T20:41:00-05:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I&rsquo;ve been re-writing/copying the same JS to deal with adding/removing nested
+attributes for far too long. On a project I recently started, I was fortunate
+enough to stumble across
+<a href="https://github.com/patbenatar/jquery-nested_attributes">
+patbenatar/jquery-nested_attributes</a>. This jquery plugin makes handling
+nested objects a cinch.</p>
+
+<p>The simplest usage looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">container&quot;</span><span class="p">).</span><span class="nx">nestedAttributes</span><span class="p">(</span><span class="nf">-&gt;</span>
+</span><span class='line'>  <span class="nv">bindAddTo: </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">add_another&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the above example, <code>#container</code> refers to a DOM element whose immediate
+descendants are considered to be sets of nested attributes. When the user
+clicks the link referenced by <code>#add_another</code> the plugin automatically clones a
+set of fields and appends to the DOM.</p>
+
+<p>In case you need a bit more flexibility, there are a slew of options available:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nx">collectionName</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>         <span class="c1">// If not provided, we will attempt to autodetect. Provide this for complex collection names</span>
+</span><span class='line'>  <span class="nx">bindAddTo</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>              <span class="c1">// Required unless you are implementing your own add handler (see API below). The single DOM element that when clicked will add another set of fields</span>
+</span><span class='line'>  <span class="nx">removeOnLoadIf</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>         <span class="c1">// Function. It will be called for each existing item, return true to remove that item</span>
+</span><span class='line'>  <span class="nx">collectIdAttributes</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>     <span class="c1">// Attempt to collect Rail&#39;s ID attributes</span>
+</span><span class='line'>  <span class="nx">beforeAdd</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>              <span class="c1">// Function. Callback before adding an item</span>
+</span><span class='line'>  <span class="nx">afterAdd</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>               <span class="c1">// Function. Callback after adding an item</span>
+</span><span class='line'>  <span class="nx">beforeMove</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>             <span class="c1">// Function. Callback before updating indexes on an item</span>
+</span><span class='line'>  <span class="nx">afterMove</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>              <span class="c1">// Function. Callback after updating indexes on an item</span>
+</span><span class='line'>  <span class="nx">beforeDestroy</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>          <span class="c1">// Function. Callback before destroying an item</span>
+</span><span class='line'>  <span class="nx">afterDestroy</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>           <span class="c1">// Function. Callback after destroying an item</span>
+</span><span class='line'>  <span class="nx">destroySelector</span><span class="o">:</span> <span class="s1">&#39;.destroy&#39;</span><span class="p">,</span>   <span class="c1">// Pass in a custom selector of an element in each item that will destroy that item when clicked</span>
+</span><span class='line'>  <span class="nx">deepClone</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>               <span class="c1">// Do you want jQuery to deep clone the element? Deep clones preserve events. Undesirable when using BackBone views for each element.</span>
+</span><span class='line'>  <span class="nx">$clone</span><span class="o">:</span> <span class="kc">null</span>                   <span class="c1">// Pass in a clean element to be used when adding new items. Useful when using plugins like jQuery UI Datepicker or Select2. Use in conjunction with `afterAdd`.</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In my case, I am using select2 to provide some fancy select elements. The only
+problem was select2 wasn&rsquo;t playing nice&mdash;I couldn&rsquo;t unbind select2 from the
+select element and as a result pressing the &ldquo;add another&rdquo; link made the form
+unusable. After a quick iteration with the plugin&rsquo;s author on github, I learned
+about the <code>$clone</code> option. You can use <code>$clone</code> to pass in a &ldquo;clean&rdquo; element
+that will get appended to the DOM when the &ldquo;add another&rdquo; link is pressed.</p>
+
+<p>To take advantage of the <code>$clone</code> option you just have to get a copy of your
+DOM element before binding any other JS to it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">clone = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;.nested-object-fields:first&#39;</span><span class="p">).</span><span class="nx">clone</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s">&quot;.container&quot;</span><span class="p">).</span><span class="nx">nestedAttributes</span><span class="p">(</span>
+</span><span class='line'>  <span class="nv">bindAddTo: </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;.add-another&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="nv">$clone: </span><span class="nx">clone</span>
+</span><span class='line'>  <span class="nv">afterAdd: </span><span class="nf">(el) -&gt;</span>
+</span><span class='line'>  <span class="p">...</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Deleting items is just as easy. I got tripped up by having a hidden field for
+<code>_destroy</code>. You don&rsquo;t need it! You just need to have an element with
+<code>"destroy"</code> as the class. When this element is clicked the plugin automatically
+adds the <code>_destroy</code> hidden field for you.</p>
+
+<p>I can&rsquo;t imagine an easier way to manage nested attributes. Thanks, @patbenatar,
+for an awesome plugin.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Ryan Winograd</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-29T20:41:00-05:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://rylwin.github.io/blog/2013/07/29/stop-writing-js-for-nested-attributes/" data-via="" data-counturl="http://rylwin.github.io/blog/2013/07/29/stop-writing-js-for-nested-attributes/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/06/25/perfect-remote-pair-environment/" title="Previous Post: The Perfect Remote Pair Environment">&laquo; The Perfect Remote Pair Environment</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/09/29/stop-writing-rails-applications/" title="Next Post: Stop writing Rails applications">Stop writing Rails applications &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/29/stop-writing-rails-applications/">Stop writing Rails applications</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/stop-writing-js-for-nested-attributes/">Stop writing JS for nested attributes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/25/perfect-remote-pair-environment/">The Perfect Remote Pair Environment</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/04/19/sending-emails-via-gmail-as-another-person/">Sending emails via Gmail as "another person"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests/">Skip reloading fixtures each time you run your Rails tests</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Ryan Winograd -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'rylwinsblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://rylwin.github.io/blog/2013/07/29/stop-writing-js-for-nested-attributes/';
+        var disqus_url = 'http://rylwin.github.io/blog/2013/07/29/stop-writing-js-for-nested-attributes/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

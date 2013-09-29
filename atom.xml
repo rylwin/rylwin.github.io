@@ -1,113 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>rylwin's blog</title>
-  <meta name="author" content="Ryan Winograd">
-
-  
-  <meta name="description" content="TL;DR Don&rsquo;t just throw all your code in app/models; don&rsquo;t just build a Rails app.
-Have another directory that contains all of your domain &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="http://rylwin.github.io">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="rylwin's blog" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-6332560-8']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">rylwin's blog</a></h1>
-  
-    <h2>coding for results</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:rylwin.github.io" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
+  <title><![CDATA[rylwin's blog]]></title>
+  <link href="http://rylwin.github.io/atom.xml" rel="self"/>
+  <link href="http://rylwin.github.io/"/>
+  <updated>2013-09-29T16:15:02-05:00</updated>
+  <id>http://rylwin.github.io/</id>
+  <author>
+    <name><![CDATA[Ryan Winograd]]></name>
     
-      <h1 class="entry-title"><a href="/blog/2013/09/29/stop-writing-rails-applications/">Stop Writing Rails Applications</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-
-
-<time datetime="2013-09-29T16:01:00-05:00" pubdate data-updated="true">Sep 29<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>TL;DR</h2>
+  <entry>
+    <title type="html"><![CDATA[Stop writing Rails applications]]></title>
+    <link href="http://rylwin.github.io/blog/2013/09/29/stop-writing-rails-applications/"/>
+    <updated>2013-09-29T16:01:00-05:00</updated>
+    <id>http://rylwin.github.io/blog/2013/09/29/stop-writing-rails-applications</id>
+    <content type="html"><![CDATA[<h2>TL;DR</h2>
 
 <p>Don&rsquo;t just throw all your code in <code>app/models</code>; don&rsquo;t just build a Rails app.
 Have another directory that contains all of your domain-specific logic. Put some
@@ -372,42 +283,15 @@ Rails, yet I&rsquo;m still able to reap the benefit of Rails (which is plenty!).
 <p>Let me know if you like this idea. If there&rsquo;s interest, I&rsquo;ll write some
 follow-up posts with code samples that demonstrate how I&rsquo;m using this <code>app/lib</code>
 organization to write cleaner, more modular code.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/29/stop-writing-js-for-nested-attributes/">Stop Writing JS for Nested Attributes</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-29T20:41:00-05:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&rsquo;ve been re-writing/copying the same JS to deal with adding/removing nested
+  <entry>
+    <title type="html"><![CDATA[Stop writing JS for nested attributes]]></title>
+    <link href="http://rylwin.github.io/blog/2013/07/29/stop-writing-js-for-nested-attributes/"/>
+    <updated>2013-07-29T20:41:00-05:00</updated>
+    <id>http://rylwin.github.io/blog/2013/07/29/stop-writing-js-for-nested-attributes</id>
+    <content type="html"><![CDATA[<p>I&rsquo;ve been re-writing/copying the same JS to deal with adding/removing nested
 attributes for far too long. On a project I recently started, I was fortunate
 enough to stumble across
 <a href="https://github.com/patbenatar/jquery-nested_attributes">
@@ -501,42 +385,15 @@ adds the <code>_destroy</code> hidden field for you.</p>
 
 <p>I can&rsquo;t imagine an easier way to manage nested attributes. Thanks, @patbenatar,
 for an awesome plugin.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/06/25/perfect-remote-pair-environment/">The Perfect Remote Pair Environment</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-25T10:37:00-05:00" pubdate data-updated="true">Jun 25<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I recently started working with a remote programmer and quickly realized we
+  <entry>
+    <title type="html"><![CDATA[The Perfect Remote Pair Environment]]></title>
+    <link href="http://rylwin.github.io/blog/2013/06/25/perfect-remote-pair-environment/"/>
+    <updated>2013-06-25T10:37:00-05:00</updated>
+    <id>http://rylwin.github.io/blog/2013/06/25/perfect-remote-pair-environment</id>
+    <content type="html"><![CDATA[<p>I recently started working with a remote programmer and quickly realized we
 needed an effective way to pair remotely. Using a ssh, vim, and tmux (along
 with some other nifty tools) I was able to set up a powerful pair environment
 in minutes. Here are the steps:</p>
@@ -654,42 +511,15 @@ initials. When you want to commit as a pair, just type:</p>
 easy. I&rsquo;ve found this setup to be just as easy as working side-by-side in
 person. Perhaps even better, because when we&rsquo;re done pairing I can logout of
 the pair server and get right back to working locally.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/04/19/sending-emails-via-gmail-as-another-person/">Sending Emails via Gmail as &#8220;Another Person&#8221;</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-19T18:52:00-05:00" pubdate data-updated="true">Apr 19<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Recently, I needed to find a way to send emails from a web-based application so
+  <entry>
+    <title type="html"><![CDATA[Sending emails via Gmail as "another person"]]></title>
+    <link href="http://rylwin.github.io/blog/2012/04/19/sending-emails-via-gmail-as-another-person/"/>
+    <updated>2012-04-19T18:52:00-05:00</updated>
+    <id>http://rylwin.github.io/blog/2012/04/19/sending-emails-via-gmail-as-another-person</id>
+    <content type="html"><![CDATA[<p>Recently, I needed to find a way to send emails from a web-based application so
 that it seemed, to the recipient, as if the user initiating the action was
 doing the sending (as opposed to the application). Gmail, however, prevents
 spoofing of emails: If you set the &ldquo;from&rdquo; field to an email address that
@@ -711,42 +541,15 @@ reply, the &ldquo;to&rdquo; field of my email is set to <a href="&#x6d;&#x61;&#x
 </pre></td><td class='code'><pre><code class=''><span class='line'>From:     "Bob Smith" &lt;app-email-account@example.com&gt;
 </span><span class='line'>Reply-To: bob.smith@example.com</span></code></pre></td></tr></table></div></figure>
 
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests/">Skip Reloading Fixtures Each Time You Run Your Rails Tests</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-02-04T18:55:00-06:00" pubdate data-updated="true">Feb 4<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Everyone wants their tests to run faster. I want my tests to run faster. That&rsquo;s why I&rsquo;ve been using <a href="https://github.com/grosser/parallel">parallel</a> when I need to run my whole test suite (or at least a large part of it, e.g., unit tests). And <a href="https://github.com/myronmarston/vcr">VCR</a> makes it really easy to record HTTP interactions to play back later, which means your tests will run faster and will pass even when you&rsquo;re not online.</p>
+  <entry>
+    <title type="html"><![CDATA[Skip reloading fixtures each time you run your Rails tests]]></title>
+    <link href="http://rylwin.github.io/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests/"/>
+    <updated>2012-02-04T18:55:00-06:00</updated>
+    <id>http://rylwin.github.io/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests</id>
+    <content type="html"><![CDATA[<p>Everyone wants their tests to run faster. I want my tests to run faster. That&rsquo;s why I&rsquo;ve been using <a href="https://github.com/grosser/parallel">parallel</a> when I need to run my whole test suite (or at least a large part of it, e.g., unit tests). And <a href="https://github.com/myronmarston/vcr">VCR</a> makes it really easy to record HTTP interactions to play back later, which means your tests will run faster and will pass even when you&rsquo;re not online.</p>
 
 <p>A lot of the time I just want to run a single test file (or single test method)—and this, for me, takes an annoyingly long time. If you have a lot of fixtures like I do, then you may want to read on. Let&rsquo;s start with the test benchmarks.</p>
 
@@ -882,97 +685,7 @@ from 15s to ~3.5s. I can live with that. I can be productive with that.</p>
 
 <p>* This app was started a long, long time ago and migrating to factories would
   be way too painful.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2013/09/29/stop-writing-rails-applications/">Stop writing Rails applications</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/07/29/stop-writing-js-for-nested-attributes/">Stop writing JS for nested attributes</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/25/perfect-remote-pair-environment/">The Perfect Remote Pair Environment</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/04/19/sending-emails-via-gmail-as-another-person/">Sending emails via Gmail as &#8220;another person&#8221;</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests/">Skip reloading fixtures each time you run your Rails tests</a>
-      </li>
-    
-  </ul>
-</section>
-
-
-
-
-
-  
-</aside>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Ryan Winograd -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'rylwinsblog';
-      
-        
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
-</html>
+</feed>

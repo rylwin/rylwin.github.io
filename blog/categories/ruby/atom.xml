@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ruby | rylwin's blog]]></title>
+  <link href="http://rylwin.github.io/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://rylwin.github.io/"/>
+  <updated>2013-09-29T16:15:02-05:00</updated>
+  <id>http://rylwin.github.io/</id>
+  <author>
+    <name><![CDATA[Ryan Winograd]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Stop writing Rails applications]]></title>
+    <link href="http://rylwin.github.io/blog/2013/09/29/stop-writing-rails-applications/"/>
+    <updated>2013-09-29T16:01:00-05:00</updated>
+    <id>http://rylwin.github.io/blog/2013/09/29/stop-writing-rails-applications</id>
+    <content type="html"><![CDATA[<h2>TL;DR</h2>
+
+<p>Don&rsquo;t just throw all your code in <code>app/models</code>; don&rsquo;t just build a Rails app.
+Have another directory that contains all of your domain-specific logic. Put some
+thought into how you organize the files in that directory. And there&rsquo;s a rule to
+follow: files in this directory must not invoke any Rails-provided methods.</p>
+
+<h2>Write an application for your domain, not a Rails app</h2>
+
+<p>Don&rsquo;t get me wrong. <strong>Rails is fantastic</strong>&mdash;I love it! But my past Rails
+projects all eventually suffer from poor architecture and slow tests. <strong>It&rsquo;s not
+Rails' fault, it&rsquo;s mine. I&rsquo;ve been leaning too heavily on Rails this whole
+time.</strong> Now I&rsquo;m finally learning how to build great apps that I enjoy working on
+long beyond the prototype stage.</p>
+
+<p>The key to building an application with Rails that stands the test of time is to
+not use Rails as the defining feature of the application.  <strong>Rails is just a
+delivery mechanism and a persistence layer</strong>.  The domain logic should be
+separate from Rails. (Thanks to Bob Martin for
+<a href="http://youtu.be/WpkDN78P884">motivating me to confront this this issue</a>.)</p>
+
+<p>At the same time, <strong>Rails provides a lot of default goodness out of the box. I
+do not want a lot of extra code that re-invents anything</strong> already provided
+by Rails. The goal is to achieve an improved architecture without sacrificing
+the ease provided by Rails.</p>
+
+<p>I&rsquo;ve split this post into two parts (ignoring this intro). The first is a
+high-level explanation of the architecture that I&rsquo;m proposing.  In the second
+section, I&rsquo;ll show some of the code I&rsquo;m using to get this all to work.</p>
+
+<h2>The Architecture (from 20k ft)</h2>
+
+<p>The short version: <code>app/models</code> contains my ActiveRecord models and <code>app/lib</code>
+contains application / domain-specific logic.</p>
+
+<h3>app/models</h3>
+
+<p>The <strong>classes in <code>app/models</code> should be ActiveRecord classes or classes that
+extensively use the ActiveRecord API</strong> (e.g., query-helper classes).
+Additionally, code in <strong><code>app/models</code> should know nothing of our domain logic</strong>.
+The classes should be focused only on data retrieval and storage. One way to
+think of <code>app/models</code> classes is as <strong>facades to the ActiveRecord API</strong>.</p>
+
+<p>I use ActiveRecord models throughout the application, but <strong>I don&rsquo;t write any
+code outside of <code>app/models</code> that directly uses an ActiveRecord method</strong>. This
+means that, in code outside of <code>app/models</code>, I only invoke standard field
+getters/setters and methods that I&rsquo;ve defined on the models.</p>
+
+<p>This approach is a balancing act. For example, I let scaffolded controllers
+invoke ActiveRecord methods&mdash;I&rsquo;m not going to spend time updating the default
+controllers.  This goes to the point of not creating extra work / reinventing
+the wheel.  After all, one could have PORO classes to represent each
+ActiveRecord model to the rest of the application, but achieving this would
+require a decent amount of work for what may be an almost entirely academic
+benefit.</p>
+
+<h3>app/lib</h3>
+
+<p>The <strong><code>app/lib</code> directory contains the business/domain logic</strong>. The code in
+<code>app/lib</code> must have <strong>no knowledge of Rails</strong>&mdash;none at all.  <code>app/lib</code> classes
+(all POROs) can still use the model classes, but they are not allowed to use any
+ActiveRecord API methods (except the field getters/setters). This means direct
+invocation of <code>save</code>, <code>create</code>, <code>update_attributes</code>, all querying, etc. is off
+limits.</p>
+
+<p>By separating the application logic into a separate directory, I&rsquo;ve found it
+much <strong>easier to make good architectural decisions</strong>. A nice benefit of this
+approach is that it makes it very easy to write
+<a href="http://arrrrcamp.be/videos/corey-haines/fast-rails-tests">fast_specs</a> since I
+know that code in <code>app/lib</code> does not have dependencies on Rails or the database.
+All models in <code>app/lib</code> have their specs located in a <code>fast_spec</code> directory.</p>
+
+<p>The classes within <code>app/lib</code> are organized into modules. The modules you define
+will vary depending on your domain, but I&rsquo;ll share a few of mine from a project
+I&rsquo;m working on:</p>
+
+<h4>Integration &ndash; interaction with remote data sources</h4>
+
+<p>Integration classes are responsible for interacting with remote data sources.
+These classes have no dependencies on our other classes. The external sources
+may be remote APIs, uploaded data files, etc.</p>
+
+<h4>Render &ndash; renders documents in various formats</h4>
+
+<p>Classes in the render module are responsible for rendering non-HTML/JSON views
+(e.g., render a PDF, XLS, etc). It is often useful to be able to generate these
+files outside of the standard request/response cycle and it&rsquo;s much easier to
+test the result when it&rsquo;s just plain Ruby.</p>
+
+<h4>Service &ndash; encapsulates user story logic</h4>
+
+<p>Service classes encapsulate the logic of our user stories (or parts of stories).
+The service classes decrease complexity and coupling in the system by their
+organization and by providing interaction between the persistence layer
+(<code>app/models</code>) and the domain logic layer (<code>app/lib</code>). Service classes may
+invoke other service classes to build more complex behaviors.</p>
+
+<h4>Util &ndash; code not relevant to our domain</h4>
+
+<p>Any code unrelated to our specific domain gets placed here (e.g., I have a class
+that converts XLSB files to XLS and another that compares hashes). Anything you
+throw in here might be a good candidate for a gem!</p>
+
+<h2>This sounds awesome. How can I do it? (i.e., the code)</h2>
+
+<h3>Setting up <code>app/lib</code></h3>
+
+<p>Add the following to config/application.rb:</p>
+
+<p><code>ruby
+config.autoload_paths += %W(#{config.root}/app/lib)
+</code></p>
+
+<p>That&rsquo;s all you need to do in order to begin adding code into <code>app/lib</code>! Here&rsquo;s
+what my <code>app/lib</code> looks like:</p>
+
+<p><code>bash
+integration/    render/     service/    util/
+integration.rb  render.rb   service.rb  util.rb
+</code></p>
+
+<p>Each folder (module) has a simple file with the same name that creates the
+module. E.g.,:</p>
+
+<p><code>ruby service.rb
+module Service; end
+</code></p>
+
+<h3>Setting up <code>fast_spec</code></h3>
+
+<p>For the corresponding fast_specs, add a <code>fast_spec</code> directory at the top level
+of your project. Then add a file <code>fast_spec/spec_fast_helper.rb</code>:</p>
+
+<p>```ruby fast_spec/spec_fast_helper.rb
+require &lsquo;bundler&rsquo;</p>
+
+<h1>require &lsquo;other gems from your bundle&rsquo;</h1>
+
+<p>root = File.join(File.dirname(<strong>FILE</strong>), &lsquo;..&rsquo;)</p>
+
+<h1>Set up any configuration here&hellip;</h1>
+
+<h1>I18n.load_path = [File.join(root, &lsquo;config&rsquo;, &lsquo;locales&rsquo;, &lsquo;en.yml&rsquo;)]</h1>
+
+<h1>Require your app/lib folder. You may need to require some classes first</h1>
+
+<h1>depending on how you&rsquo;ve set up your class hierarchy.</h1>
+
+<p>Dir[File.join(root, &lsquo;app&rsquo;, &lsquo;lib&rsquo;, &lsquo;<em>*&rsquo;, &lsquo;</em>.rb&rsquo;)].sort.each do |lib|
+  require lib
+end
+```</p>
+
+<p>I also added a rake task so that I can <code>rake fast</code>:</p>
+
+<p>```ruby lib/tasks/000_fast.rake
+require &lsquo;rspec&rsquo;</p>
+
+<p>desc &ldquo;Run fast specs&rdquo;
+RSpec::Core::RakeTask.new(:fast) do |task|
+  task.pattern = &lsquo;fast_spec/<em>*/</em>_spec.rb&rsquo;
+  task.rspec_opts = &lsquo;-Ifast_spec&rsquo;
+end</p>
+
+<p>task :default => :fast
+```</p>
+
+<p>Now in each fast_spec file just <code>require 'spec_fast_helper'</code>. If you like guard,
+check out <a href="https://github.com/shutl/guard-fast_spec">guard-fast_spec</a>. And if
+you haven&rsquo;t been using guard because your tests have been too slow, try it
+again.  When your tests are this fast you&rsquo;ll love it.</p>
+
+<p>When I need to include ActiveRecord models in the tests, I just use stubs. The
+danger here is that your specs become out of sync with your models, but a decent
+integration test suite should catch these issues.</p>
+
+<p>Since all the complicated logic is contained in <code>fast_spec</code>, the specs in <code>spec</code>
+are all simple. Really simple. Which means that those specs run decently fast:</p>
+
+<p>```bash
+$ time rake spec</p>
+
+<h1>output truncated</h1>
+
+<p>&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.
+&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.
+&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.
+&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.
+&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+
+<p>Finished in 6.82 seconds
+350 examples, 0 failures</p>
+
+<p>rake spec  19.44s user 1.62s system 93% cpu 22.624 total
+```</p>
+
+<p>And the <code>fast_specs</code>?</p>
+
+<p>```bash
+$ time rake fast</p>
+
+<h1>output truncated</h1>
+
+<p>&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.
+&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.
+&hellip;&hellip;..</p>
+
+<p>Finished in 1.09 seconds
+166 examples, 0 failures</p>
+
+<p>rake fast  7.91s user 0.77s system 98% cpu 8.798 total
+```</p>
+
+<p>It&rsquo;s still a young app so there aren&rsquo;t a ton of specs, but I think you get the
+idea.</p>
+
+<h2>Minimal changes, big results</h2>
+
+<p>This simple organizational change (along with the associated rules) makes it
+easier for me to employ good OOP design principles in my projects that use
+Rails, yet I&rsquo;m still able to reap the benefit of Rails (which is plenty!).</p>
+
+<p>Let me know if you like this idea. If there&rsquo;s interest, I&rsquo;ll write some
+follow-up posts with code samples that demonstrate how I&rsquo;m using this <code>app/lib</code>
+organization to write cleaner, more modular code.</p>
+]]></content>
+  </entry>
+  
+</feed>

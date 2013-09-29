@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Skip reloading fixtures each time you run your Rails tests - rylwin's blog</title>
+  <meta name="author" content="Ryan Winograd">
+
+  
+  <meta name="description" content="Everyone wants their tests to run faster. I want my tests to run faster. That&rsquo;s why I&rsquo;ve been using parallel when I need to run my whole &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://rylwin.github.io/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="rylwin's blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-6332560-8']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">rylwin's blog</a></h1>
+  
+    <h2>coding for results</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:rylwin.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Skip Reloading Fixtures Each Time You Run Your Rails Tests</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-04T18:55:00-06:00" pubdate data-updated="true">Feb 4<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Everyone wants their tests to run faster. I want my tests to run faster. That&rsquo;s why I&rsquo;ve been using <a href="https://github.com/grosser/parallel">parallel</a> when I need to run my whole test suite (or at least a large part of it, e.g., unit tests). And <a href="https://github.com/myronmarston/vcr">VCR</a> makes it really easy to record HTTP interactions to play back later, which means your tests will run faster and will pass even when you&rsquo;re not online.</p>
+
+<p>A lot of the time I just want to run a single test file (or single test method)—and this, for me, takes an annoyingly long time. If you have a lot of fixtures like I do, then you may want to read on. Let&rsquo;s start with the test benchmarks.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% time ruby test/unit/letter_test.rb
+</span><span class='line'>Loaded suite test/unit/letter_test
+</span><span class='line'>Started
+</span><span class='line'>..........
+</span><span class='line'>Finished in 7.705702 seconds.
+</span><span class='line'>
+</span><span class='line'>10 tests, 10 assertions, 0 failures, 0 errors
+</span><span class='line'>10.80s user 1.90s system 15.393 total</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Fifteen whole seconds to wait for a simple set of unit tests to run! and most of that time is spent just preparing to run the tests. My first step was to use <a href="https://github.com/sporkrb/spork.git">spork</a>, which speeds up testing by preloading the Rails env and forking when you want to run your tests.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>% testdrb test/unit/letter_test.rb
+</span><span class='line'>Loaded suite letter_test.rb
+</span><span class='line'>Started
+</span><span class='line'>..........
+</span><span class='line'>Finished in 8.642509 seconds.
+</span><span class='line'>
+</span><span class='line'>10 tests, 10 assertions, 0 failures, 0 errors
+</span><span class='line'>0.12s user 0.04s system 9.052 total</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Quite an improvement! Spork shaved off about 6s from the total time to run the test just by preloading the Rails env.</p>
+
+<p>But 9s is still along time to run a few simple tests. Digging through test.log I realized an absurd amount of time was being spent loading in fixtures.* The worst part is that there is really no need to reload the fixtures into the DB once they are in there as long as you are using transactional fixtures—I only need Rails to know which fixtures are present so I can easily access the AR objects I need by the names they have in the fixtures. This part doesn&rsquo;t take long at all. Most of the time loading in fixtures is spent putting them in the DB.</p>
+
+<p>After some digging through ActiveSupport::TestCase and finding my way into ActiveRecord::Fixtures, I realized that if I could stub out the database adapter methods that are used to load in the fixtures then I could get the benefit of having Rails know which fixtures exist without actually spending the time to reload them into the database. Here&rsquo;s how I modified my test/test_helper.rb to achieve this using <a href="https://github.com/floehopper/mocha">mocha</a> (only relevant code shown):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;RAILS_ENV&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+</span><span class='line'><span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../config/environment&#39;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;rails/test_help&#39;</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;mocha&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">unless</span> <span class="p">(</span><span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;SKIP_FIXTURES&quot;</span><span class="o">]||</span><span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;SF&quot;</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">nil?</span>
+</span><span class='line'>  <span class="c1"># Make sure to stub whatever adapter corresponds to your test db</span>
+</span><span class='line'>  <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:ConnectionAdapters</span><span class="o">::</span><span class="no">Mysql2Adapter</span><span class="o">.</span><span class="n">any_instance</span><span class="o">.</span><span class="n">stubs</span><span class="p">(</span><span class="ss">:delete</span><span class="p">)</span><span class="o">.</span><span class="n">returns</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>  <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:ConnectionAdapters</span><span class="o">::</span><span class="no">Mysql2Adapter</span><span class="o">.</span><span class="n">any_instance</span><span class="o">.</span><span class="n">stubs</span><span class="p">(</span><span class="ss">:insert_fixture</span><span class="p">)</span><span class="o">.</span><span class="n">returns</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">ActiveSupport</span><span class="o">::</span><span class="no">TestCase</span>
+</span><span class='line'>  <span class="n">fixtures</span> <span class="ss">:all</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">setup</span>
+</span><span class='line'>    <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:ConnectionAdapters</span><span class="o">::</span><span class="no">Mysql2Adapter</span><span class="o">.</span><span class="n">any_instance</span><span class="o">.</span><span class="n">unstub</span><span class="p">(</span><span class="ss">:delete</span><span class="p">)</span>
+</span><span class='line'>    <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:ConnectionAdapters</span><span class="o">::</span><span class="no">Mysql2Adapter</span><span class="o">.</span><span class="n">any_instance</span><span class="o">.</span><span class="n">unstub</span><span class="p">(</span><span class="ss">:insert_fixture</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="c1"># other stuff...</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now when I run my test with the DB methods stubbed out:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>% time SF=true ruby test/unit/letter_test.rb
+</span><span class='line'>Loaded suite test/unit/letter_test
+</span><span class='line'>Started
+</span><span class='line'>..........
+</span><span class='line'>Finished in 2.664011 seconds.
+</span><span class='line'>
+</span><span class='line'>10 tests, 10 assertions, 0 failures, 0 errors
+</span><span class='line'>7.96s user 1.70s system 10.562 total
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And with spork (must start the spork server w/ SF=true):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>% time testdrb test/unit/letter_test.rb
+</span><span class='line'>Loaded suite letter_test.rb
+</span><span class='line'>Started
+</span><span class='line'>..........
+</span><span class='line'>Finished in 3.351071 seconds.
+</span><span class='line'>
+</span><span class='line'>10 tests, 10 assertions, 0 failures, 0 errors
+</span><span class='line'>0.14s user 0.01s system 3.574 total
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So by using spork and skipping loading fixtures every time I was able to go
+from 15s to ~3.5s. I can live with that. I can be productive with that.</p>
+
+<p>* This app was started a long, long time ago and migrating to factories would
+  be way too painful.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Ryan Winograd</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-04T18:55:00-06:00" pubdate data-updated="true">Feb 4<span>th</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://rylwin.github.io/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests/" data-via="" data-counturl="http://rylwin.github.io/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/04/19/sending-emails-via-gmail-as-another-person/" title="Next Post: Sending emails via Gmail as "another person"">Sending emails via Gmail as "another person" &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/29/stop-writing-rails-applications/">Stop writing Rails applications</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/stop-writing-js-for-nested-attributes/">Stop writing JS for nested attributes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/25/perfect-remote-pair-environment/">The Perfect Remote Pair Environment</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/04/19/sending-emails-via-gmail-as-another-person/">Sending emails via Gmail as "another person"</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests/">Skip reloading fixtures each time you run your Rails tests</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Ryan Winograd -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'rylwinsblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://rylwin.github.io/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests/';
+        var disqus_url = 'http://rylwin.github.io/blog/2012/02/04/skip-reloading-fixtures-each-time-you-run-your-rails-tests/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
