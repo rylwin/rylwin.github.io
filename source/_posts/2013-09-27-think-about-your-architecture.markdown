@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Stop writing Rails applications"
+title: "Think about your architecture"
 date: 2013-09-29 16:01
 comments: true
 categories: ruby rails
