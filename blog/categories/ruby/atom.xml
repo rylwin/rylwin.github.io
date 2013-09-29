@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | rylwin's blog]]></title>
   <link href="http://rylwin.github.io/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://rylwin.github.io/"/>
-  <updated>2013-09-29T16:15:02-05:00</updated>
+  <updated>2013-09-29T16:20:47-05:00</updated>
   <id>http://rylwin.github.io/</id>
   <author>
     <name><![CDATA[Ryan Winograd]]></name>
@@ -14,10 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Stop writing Rails applications]]></title>
-    <link href="http://rylwin.github.io/blog/2013/09/29/stop-writing-rails-applications/"/>
+    <title type="html"><![CDATA[Think about your architecture]]></title>
+    <link href="http://rylwin.github.io/blog/2013/09/29/think-about-your-architecture/"/>
     <updated>2013-09-29T16:01:00-05:00</updated>
-    <id>http://rylwin.github.io/blog/2013/09/29/stop-writing-rails-applications</id>
+    <id>http://rylwin.github.io/blog/2013/09/29/think-about-your-architecture</id>
     <content type="html"><![CDATA[<h2>TL;DR</h2>
 
 <p>Don&rsquo;t just throw all your code in <code>app/models</code>; don&rsquo;t just build a Rails app.
