@@ -25,8 +25,14 @@
         <lastmod>2013-09-29T16:34:16-05:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://rylwin.github.io/blog/2014/08/01/simulate-timeouts-for-testing-devise-slash-warden-with-capybara/
+        </loc>
+        <lastmod>2014-08-01T16:25:51-05:00</lastmod>
+    </url>
+    <url>
         <loc>http://rylwin.github.io/blog/archives/</loc>
-        <lastmod>2013-09-29T16:34:16-05:00</lastmod>
+        <lastmod>2014-08-01T16:25:51-05:00</lastmod>
     </url>
     <url>
         <loc>http://rylwin.github.io/robots.txt</loc>
@@ -34,6 +40,6 @@
     </url>
     <url>
         <loc>http://rylwin.github.io/</loc>
-        <lastmod>2013-09-29T16:34:16-05:00</lastmod>
+        <lastmod>2014-08-01T16:25:51-05:00</lastmod>
     </url>
 </urlset>

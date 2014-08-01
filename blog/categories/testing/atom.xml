@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: testing | rylwin's blog]]></title>
+  <link href="http://rylwin.github.io/blog/categories/testing/atom.xml" rel="self"/>
+  <link href="http://rylwin.github.io/"/>
+  <updated>2014-08-01T16:25:51-05:00</updated>
+  <id>http://rylwin.github.io/</id>
+  <author>
+    <name><![CDATA[Ryan Winograd]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Simulate timeouts for testing Devise/Warden with Capybara]]></title>
+    <link href="http://rylwin.github.io/blog/2014/08/01/simulate-timeouts-for-testing-devise-slash-warden-with-capybara/"/>
+    <updated>2014-08-01T16:22:00-05:00</updated>
+    <id>http://rylwin.github.io/blog/2014/08/01/simulate-timeouts-for-testing-devise-slash-warden-with-capybara</id>
+    <content type="html"><![CDATA[<p>I found myself wanting to test some custom behavior that runs when the user&rsquo;s
+session times out. Instead of <code>sleep User.timeout_in</code>, here&rsquo;s the solution we
+are using to simulate a user timeout:</p>
+
+<p><code>ruby
+Warden.on_next_request do |proxy|
+  session = proxy.env['rack.session']['warden.user.user.session']
+  session['last_request_at'] -= User.timeout_in
+end
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>
